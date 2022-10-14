@@ -1,0 +1,451 @@
+.carouselHead {
+  top: 0;
+}
+
+.carouselHead h5 {
+  text-transform: uppercase;
+  font-weight: 800;
+  font-family: cursive;
+}
+
+.fluid {
+  background-color: #fffaf4;
+}
+
+.eventHead {
+  text-align: center;
+  text-transform: uppercase;
+  color: #8ca1d0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.card {
+  border-radius: 0.5rem;
+}
+
+.fontawesome {
+  color: red;
+}
+.cardResponsive {
+  padding: 1rem 8rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .cardResponsive {
+    padding: 0rem;
+  }
+}
+
+.card1 {
+  border-radius: 0.5rem;
+  height: 22rem;
+}
+
+.picHeight {
+  height: 14rem;
+}
+
+.memberHeight {
+  height: 50rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .memberHeight {
+    height: 110rem;
+  }
+}
+
+.orangeBanner {
+  background: #ddae24;
+  border-top-left-radius: 50px;
+}
+.whiteBanner {
+  position: absolute;
+  top: 14%;
+  left: 0;
+  /* transform: translate(0%,0%); */
+  height: 18rem;
+  width: 90% !important;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .whiteBanner {
+    width: 90% !important;
+    height: 17.3rem;
+    border-top-right-radius: 25px;
+  }
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .orangeBanner {
+    height: 20rem;
+    border-top-left-radius: 40px;
+  }
+}
+
+.cardHead {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cardType {
+  padding: 0rem 10rem;
+  position: absolute;
+  top: 6rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .cardType {
+    margin-top: -3rem;
+    padding-left: 2rem;
+    padding-right: 4rem;
+  }
+}
+
+.cardHead2 {
+  border-bottom: 0.2rem solid rgb(226, 220, 220);
+  border-bottom-style: dotted;
+  background-color: white;
+}
+
+.cardHeadName {
+  text-transform: uppercase;
+  color: #ffac2c;
+  font-size: 1.5rem;
+}
+
+.memberBtn {
+  text-transform: uppercase;
+  border-radius: 2rem;
+  background-image: linear-gradient(to right, #f69032, #fdcb19);
+  border: none;
+  color: #002146;
+  height: 3rem;
+  font-weight: 600;
+  width: 13rem;
+}
+
+.btnRes {
+  position: absolute;
+  left: 3.5em;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .btnRes {
+    position: absolute;
+    left: 3.5rem;
+  }
+}
+
+/* three banners */
+.threeBanner {
+  height: 46.8rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .threeBanner {
+    height: 14rem;
+  }
+}
+.headRow > * {
+  padding: 0;
+}
+
+.secWhitebanner {
+  position: absolute;
+  top: 20rem;
+  left: 0;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .secWhitebanner {
+    top: 5rem;
+    border-top-right-radius: 2rem;
+  }
+}
+
+.secWhitebannerAlign {
+  height: 26.5rem;
+  border-top-right-radius: 4rem;
+  width: 90%;
+}
+
+.blueBanner {
+  background-color: #4e6fb7;
+  height: 30rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .blueBanner {
+    height: 10rem;
+  }
+}
+
+.greenBanner {
+  position: absolute;
+  padding-left: 10rem;
+  width: 100%;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .greenBanner {
+    padding-left: 3rem;
+  }
+}
+
+.greenBannerAlign {
+  width: 100%;
+  border-top-left-radius: 2.5rem;
+  padding-right: 5rem;
+}
+
+.headquarters {
+  position: absolute;
+  top: 5rem;
+  left: 47rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .headquarters {
+    left: 16rem;
+    top: 1.5rem;
+  }
+
+  .headquarters h4 {
+    font-size: 0.5rem !important;
+  }
+
+  .headquarters address {
+    font-size: 0.3rem !important;
+  }
+}
+
+.headquarters h4 {
+  text-transform: uppercase;
+  color: white;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.headquarters address {
+  color: white;
+}
+
+.whiteBannerText {
+  position: absolute;
+  top: 22rem;
+  display: flex;
+}
+
+.whiteBannerAlign {
+  padding: 0rem 14rem;
+}
+
+.whiteBannerText h4 {
+  color: #ffac2c;
+  text-transform: uppercase;
+  font-size: 2rem;
+}
+
+.whiteBannerText h5 {
+  color: #ffac2d;
+  text-transform: uppercase;
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+.committeeBtnAlign {
+  margin-top: 2rem;
+}
+.committeeBtn {
+  text-transform: uppercase;
+  border-radius: 2rem;
+  background-image: linear-gradient(to right, #f69032, #fdcb19);
+  border: none;
+  color: #002146;
+  height: 3rem;
+  font-weight: 600;
+  width: 13rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .whiteBannerText {
+    position: absolute;
+    top: 7rem;
+    left: 0rem;
+    display: flex;
+  }
+
+  .whiteBannerAlign {
+    padding: 0rem 2rem;
+  }
+
+  .whiteBannerText h4 {
+    color: #ffac2c;
+    text-transform: uppercase;
+    font-size: 0.6rem;
+  }
+
+  .whiteBannerText h5 {
+    color: #ffac2d;
+    text-transform: uppercase;
+    font-size: 0.6rem;
+    font-weight: 400;
+  }
+
+  .committeeBtn {
+    font-size: 0.6rem;
+    height: 2rem;
+    width: 9rem;
+  }
+
+  .committeeBtnAlign {
+    margin-top: 0rem;
+  }
+}
+
+.greenBannerText {
+  position: absolute;
+  display: flex;
+  left: 21rem;
+  top: 37rem;
+}
+
+.greenBannerText h1 {
+  text-transform: uppercase;
+  color: white;
+  font-size: 2.3rem;
+}
+
+.greenBannerText h5 {
+  text-transform: capitalize;
+  color: white;
+}
+
+.greenBtn {
+  width: 15rem;
+  height: 4rem;
+  border-radius: 2rem;
+  background: white;
+  color: #7fa53d;
+  border: none;
+  text-transform: uppercase;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .greenBannerAlign {
+    padding-right: 1rem;
+    border-top-left-radius: 1rem;
+  }
+
+  .greenBannerText {
+    left: 5rem;
+    top: 11.2rem;
+  }
+
+  .greenBannerText h1 {
+    font-size: 0.7rem;
+  }
+
+  .greenBannerText h5 {
+    font-size: 0.5rem;
+  }
+
+  .greenBtn {
+    width: 6rem;
+    height: 2.3rem;
+    font-size: 0.7rem;
+  }
+
+  .secWhitebannerAlign {
+    height: 9.7rem;
+    border-top-right-radius: 1.2rem;
+  }
+}
+
+/* footer */
+
+.footerDesign {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 2rem 0rem;
+}
+
+.footerDesign h6 {
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 300;
+  text-transform: capitalize;
+}
+
+.footerDesign a {
+  text-decoration: none;
+  color: white;
+  font-weight: 300;
+  text-transform: capitalize;
+  padding: 0rem 1rem;
+  font-size: 0.8rem;
+}
+
+.footerDesign label {
+  font-size: 0.8rem;
+  color: white;
+  font-weight: 300;
+  text-transform: capitalize;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .footerDesign {
+    display: block;
+    text-align: center;
+  }
+}
+
+/* type of members */
+
+.typeOfMembers {
+  padding: 3.5rem 10rem;
+}
+
+.typeflex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.typeflex h6 {
+  text-transform: uppercase;
+  color: rgb(78, 111, 183);
+  font-weight: 500;
+  font-size: 1.5rem;
+}
+
+.faless {
+  color: rgb(78, 111, 183);
+  cursor: pointer;
+}
+
+.fagrat {
+  color: rgb(78, 111, 183);
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .typeOfMembers {
+    padding: 1rem 2rem;
+  }
+
+  .typeflex h6 {
+    font-size: 0.5rem !important;
+  }
+
+  .faless {
+    font-size: 0.5rem;
+  }
+
+  .fagrat {
+    font-size: 0.5rem;
+  }
+}

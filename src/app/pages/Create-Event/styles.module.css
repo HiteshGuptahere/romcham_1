@@ -1,0 +1,80 @@
+.card {
+    background-color: #EDF8F4;
+     box-shadow: none;
+}
+
+
+.eventImg {
+
+    border: 1px solid #dbdbdf;
+    border-width: 0.2rem;
+    border-style: dashed;
+    position: relative;
+    height: 9rem;
+
+}
+
+.upImg {
+
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    cursor: pointer;
+}
+.eventLabel {
+
+    text-transform: capitalize;
+    color: #cfcfd3;
+}
+
+.eventInput {
+
+    border-radius: 15px;
+}
+
+.textarea {
+
+    height: 10rem !important;    
+    border-radius: 0.5rem;
+
+}
+
+.faupload { 
+
+    background-color: #4E6EB7;
+    padding: 0.5rem 1rem;
+    border-radius: 50%;
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+
+}
+
+.FaFile{
+
+    color:white;
+    cursor: pointer;
+}
+
+.btn {
+
+    background-color: #4E6EB7;
+    height: 2.6rem;
+    border-radius: 2rem;
+    color: white;
+    text-transform: capitalize;
+    width: 10rem;
+}
+
+.c1 {
+
+    display: flex;
+    position: relative;
+}
+
+.eventRadio {
+
+    position: absolute;
+    left: 13rem;
+    top: 2rem;
+}

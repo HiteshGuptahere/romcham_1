@@ -1,0 +1,48 @@
+.visionShare h3 {
+  text-align: center;
+  text-transform: uppercase;
+  color: rgb(78, 111, 183);
+}
+
+.visionAbout {
+  margin-top: 12rem;
+}
+
+.visionAbout h5 {
+  text-transform: uppercase;
+  color: #ffac2c;
+  font-weight: 700;
+}
+
+.visionAbout p {
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.visionBtn {
+  text-transform: uppercase;
+  border-radius: 2rem;
+  background-image: linear-gradient(to right, #f69032, #fdcb19);
+  border: none;
+  color: #002146;
+  height: 3rem;
+  font-weight: 600;
+  width: 13rem;
+}
+
+.visionImg {
+  margin: 0rem 11rem;
+}
+
+@media only screen and (min-width: 280px) and (max-width: 480px) {
+  .visionAbout {
+    margin-top: -3rem;
+  }
+
+  .visionBtnAlign {
+    text-align: center;
+  }
+
+  .visionImg {
+    margin: 0rem;
+  }
+}
