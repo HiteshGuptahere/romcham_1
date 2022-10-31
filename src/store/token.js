@@ -1,18 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const RoChamSlice = createSlice({
-  name: "RoCham",
+const Token = createSlice({
+  name: "Token",
   initialState: {
-    itemList: [],
+    item: {},
     totalQuantity: 0,
     showAdmin: false,
   },
   reducers: {
-    addToAdmin(state, action) {
+    addToken(state, action) {
       const newItem = action.payload;
-      // const existingItem = state.itemList.find((item) => item.id === newItem.id);
 
-      state.itemList = newItem;
+      state.item = newItem;
     },
     deleteItem(state, action) {
       const newItem = action.payload;
@@ -21,6 +20,6 @@ const RoChamSlice = createSlice({
   },
 });
 
-export const RoChamActions = RoChamSlice.actions;
+export const TokenAction = Token.actions;
 
-export default RoChamSlice;
+export default Token;

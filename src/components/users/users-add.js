@@ -41,7 +41,8 @@ export const UserCreate = ({ product, ...rest }) => {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       companyName: "",
       email: "",
       mobile: "",
@@ -58,7 +59,8 @@ export const UserCreate = ({ product, ...rest }) => {
       newsAccess: ["read"],
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("First Name is required"),
+      firstName: Yup.string().required("First Name is required"),
+      lastName: Yup.string().required("First Name is required"),
       companyName: Yup.string().required("Last Name is required"),
       email: Yup.string().email("Must be a valid email").max(255).required("Email is required"),
       mobile: Yup.string().required("Mobile is required"),
@@ -67,7 +69,8 @@ export const UserCreate = ({ product, ...rest }) => {
     onSubmit: async (values, helpers) => {
       try {
         const payload = {
-          name: values.name,
+          firstName: values.firstName,
+          lastName: values.lastName,
           companyName: values.companyName,
           email: values.email,
           mobile: values.mobile,
@@ -79,18 +82,17 @@ export const UserCreate = ({ product, ...rest }) => {
           annualTurn: values.annualTurn,
           membershipCat: values.membershipCat,
           isAdmin: values.isAdmin,
-          eventAccess: event,
-          pollsAccess: polls,
-          newsAccess: news,
+          eventAccess: [event],
+          pollsAccess: [polls],
+          newsAccess: [news],
         };
         return await axios
-          .post(process.env.NEXT_PUBLIC_USER_URL + "register", payload, {
+          .post(process.env.NEXT_PUBLIC_BASE_URL + "create-user", payload, {
             headers: {
               authorization: user.accessToken,
             },
           })
           .then((res) => {
-            console.log(res);
             handleClick("Success");
             setTimeout(() => {
               Router.push("/users").catch(console.error);
@@ -121,15 +123,12 @@ export const UserCreate = ({ product, ...rest }) => {
     });
   };
   const handleEventChange = (e) => {
-    // console.log(e);
     setEvent(e);
   };
   const handlePollsChange = (e) => {
-    // console.log(e);
     setPolls(e);
   };
   const handleNewsChange = (e) => {
-    // console.log(e);
     setNews(e);
   };
   return (
@@ -159,14 +158,28 @@ export const UserCreate = ({ product, ...rest }) => {
               <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
                 <TextField
                   style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
-                  error={Boolean(formik.touched.name && formik.errors.name)}
-                  helperText={formik.touched.name && formik.errors.name}
-                  label="Name"
-                  name="name"
+                  error={Boolean(formik.touched.firstName && formik.errors.firstName)}
+                  helperText={formik.touched.firstName && formik.errors.firstName}
+                  label="First Name"
+                  name="firstName"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   type="text"
-                  value={formik.values.name}
+                  value={formik.values.firstName}
+                  variant="outlined"
+                />
+              </Col>
+              <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
+                <TextField
+                  style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
+                  error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+                  helperText={formik.touched.lastName && formik.errors.lastName}
+                  label="Last Name"
+                  name="lastName"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="text"
+                  value={formik.values.lastName}
                   variant="outlined"
                 />
               </Col>
@@ -198,9 +211,11 @@ export const UserCreate = ({ product, ...rest }) => {
                   variant="outlined"
                 />
               </Col>
-              <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
+            </Row>
+            <Row>
+              <Col>
                 <TextField
-                  style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
+                  style={{ marginBottom: "1rem", marginRight: "1rem", width: "24%" }}
                   error={Boolean(formik.touched.password && formik.errors.password)}
                   helperText={formik.touched.password && formik.errors.password}
                   label="Password"
@@ -212,6 +227,9 @@ export const UserCreate = ({ product, ...rest }) => {
                   variant="outlined"
                 />
               </Col>
+              <Col></Col>
+              <Col></Col>
+              <Col></Col>
             </Row>
             <Row>
               <Col xs={12}>

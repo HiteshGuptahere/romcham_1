@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
-import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from "@mui/material";
+import { Box, Avatar, Divider, Drawer, Typography, useMediaQuery } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { ChartBar as ChartBarIcon } from "../icons/chart-bar";
 import { Cog as CogIcon } from "../icons/cog";
@@ -12,7 +12,7 @@ import { ShoppingBag as ShoppingBagIcon } from "../icons/shopping-bag";
 import { User as UserIcon } from "../icons/user";
 import { UserAdd as UserAddIcon } from "../icons/user-add";
 import { Users as UsersIcon } from "../icons/users";
-import { XCircle as XCircleIcon } from "../icons/x-circle";
+import { useSelector, useDispatch } from "react-redux";
 import { Logo } from "./logo";
 import { NavItem } from "./nav-item";
 
@@ -27,11 +27,16 @@ const items = [
     icon: <UsersIcon fontSize="small" />,
     title: "Users",
   },
-  // {
-  //   href: "/customers",
-  //   icon: <UsersIcon fontSize="small" />,
-  //   title: "Admin",
-  // },
+  {
+    href: "/news",
+    icon: <UsersIcon fontSize="small" />,
+    title: "News",
+  },
+  {
+    href: "/notice",
+    icon: <UsersIcon fontSize="small" />,
+    title: "Notice",
+  },
   {
     href: "/pastEvents",
     icon: <UsersIcon fontSize="small" />,
@@ -42,17 +47,27 @@ const items = [
     icon: <UsersIcon fontSize="small" />,
     title: "Committee",
   },
-
+  {
+    href: "/accessEvent",
+    icon: <CogIcon fontSize="small" />,
+    title: "Event Access",
+  },
+  {
+    href: "/accessPolls",
+    icon: <CogIcon fontSize="small" />,
+    title: "Poll Access",
+  },
+  {
+    href: "/accessNews",
+    icon: <CogIcon fontSize="small" />,
+    title: "News Access",
+  },
   {
     href: "/account",
     icon: <UserIcon fontSize="small" />,
-    title: "User Access",
+    title: "Profile",
   },
-  // {
-  //   href: '/settings',
-  //   icon: (<CogIcon fontSize="small" />),
-  //   title: 'Settings'
-  // },
+
   // {
   //   href: '/login',
   //   icon: (<LockIcon fontSize="small" />),
@@ -71,13 +86,13 @@ const items = [
 ];
 
 export const DashboardSidebar = (props) => {
+  let data = useSelector((state) => (state.Profile.item ? state.Profile.item : []));
   const { open, onClose } = props;
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"), {
     defaultMatches: true,
     noSsr: false,
   });
-
   useEffect(
     () => {
       if (!router.isReady) {
@@ -104,11 +119,30 @@ export const DashboardSidebar = (props) => {
       >
         <div>
           <Box sx={{ p: 3 }}>
-            <NextLink href="/" passHref>
+            {/* <NextLink href="/" passHref>
               <a>
                 <h1>Admin</h1>
               </a>
-            </NextLink>
+            </NextLink> */}
+            <Box
+              sx={{
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Avatar
+                src={data.image}
+                sx={{
+                  height: 150,
+                  mb: 2,
+                  width: 150,
+                }}
+              />
+              <Typography style={{ color: "white" }} gutterBottom variant="h5">
+                {data.name || "Admin"}
+              </Typography>
+            </Box>
           </Box>
         </div>
         <Divider

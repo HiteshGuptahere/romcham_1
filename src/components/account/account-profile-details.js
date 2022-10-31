@@ -23,7 +23,6 @@ export const AccountProfileDetails = (props) => {
   const [updateAdmin, setUpdateAdmin] = useState(false);
 
   const [password, setPassword] = useState({
-    oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
@@ -39,14 +38,13 @@ export const AccountProfileDetails = (props) => {
     status: 0,
     message: "",
   });
-  let urlMobile = process.env.NEXT_PUBLIC_BASE_URL + "resetPassword/";
+  let urlMobile = process.env.NEXT_PUBLIC_BASE_URL + "forgot-password?email=";
   let token = useSelector((state) => (state.Profile.itemList ? state.Profile.itemList : []));
   let account_holder = useSelector((state) => (state.Profile.item ? state.Profile.item : []));
   const [values, setValues] = useState({
-    firstName: account_holder.name,
-    lastName: "k",
+    name: account_holder.name,
     email: account_holder.email,
-    phone: account_holder.mobile,
+    mobile: account_holder.mobile,
     state: "Alabama",
     country: "USA",
   });
@@ -54,7 +52,6 @@ export const AccountProfileDetails = (props) => {
     name: account_holder.name,
     email: account_holder.email,
     mobile: account_holder.mobile,
-    password: account_holder.password,
   });
   const handleChange = (event) => {
     setValues({
@@ -71,7 +68,6 @@ export const AccountProfileDetails = (props) => {
     setNewPass({ status: 0, message: "" });
     setConfPass({ status: 0, message: "" });
     setPassword({
-      oldPassword: "",
       newPassword: "",
       confirmPassword: "",
     });
@@ -87,28 +83,31 @@ export const AccountProfileDetails = (props) => {
         });
       } else {
         await axios
-          .put(urlMobile.toString() + account_holder.email, password, {
-            headers: {
-              authorization: token.accessToken,
-            },
-          })
+          .put(
+            urlMobile.toString() + account_holder.email,
+            { newPassword: password.newPassword },
+            {
+              headers: {
+                authorization: token.accessToken,
+              },
+            }
+          )
           .then((res) => {
-            console.log(res);
-            if (res.data.status === "200") {
+            if (res.data.status === 200) {
               setConfPass({
                 status: 200,
-                message: res.data.msg,
+                message: res.data.message,
               });
               setTimeout(() => {
                 setOldPass({ status: 0, message: "" });
                 setNewPass({ status: 0, message: "" });
                 setConfPass({ status: 0, message: "" });
                 setPassword({
-                  oldPassword: "",
                   newPassword: "",
                   confirmPassword: "",
                 });
               }, 3000);
+              setOpenDialog(false);
             } else {
               setOldPass({
                 status: res.data.status,
@@ -132,15 +131,13 @@ export const AccountProfileDetails = (props) => {
   };
 
   const handleAdminUpdate = async (value) => {
-    console.log(values);
     await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "adminupdate/" + value.email, value, {
+      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-admin/" + value.email, value, {
         headers: {
           authorization: token.accessToken,
         },
       })
       .then((res) => {
-        console.log(res);
         setUpdateAdmin(false);
       })
       .catch((error) => {
@@ -159,28 +156,6 @@ export const AccountProfileDetails = (props) => {
       >
         <DialogTitle id="alert-dialog-title">{"Reset Password"}</DialogTitle>
         <DialogContent style={{ minWidth: "30rem" }}>
-          <div>
-            <TextField
-              style={{ marginBottom: "1rem", marginTop: "1rem" }}
-              fullWidth
-              label="Old password"
-              name="oldPassword"
-              type="password"
-              value={password.oldPassword}
-              onChange={(e) => {
-                setPassword({ ...password, oldPassword: e.target.value });
-                setOldPass({ ...oldPass, message: null });
-              }}
-              variant="outlined"
-            />
-            {oldPass.status ? (
-              oldPass.status === 200 ? (
-                <p style={{ color: "#5cb85c", textAlign: "center" }}>{oldPass.message}</p>
-              ) : (
-                <p style={{ color: "red", textAlign: "center" }}>{oldPass.message}</p>
-              )
-            ) : null}
-          </div>
           <div>
             <TextField
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
@@ -259,7 +234,7 @@ export const AccountProfileDetails = (props) => {
         <Card>
           <CardHeader subheader="The information can be edited" title="Profile" />
           <Divider />
-          <CardContent>
+          <CardContent style={{ minHeight: "14.8rem" }}>
             <Grid container spacing={3}>
               <Grid item md={6} xs={12}>
                 <Typography color="textPrimary" gutterBottom variant="p">
@@ -280,6 +255,7 @@ export const AccountProfileDetails = (props) => {
                   ) : null}
                 </Typography>
               </Grid>
+
               <Grid item md={6} xs={12}>
                 <Typography color="textPrimary" gutterBottom variant="p">
                   Email: {adminPfValue.email}
@@ -318,17 +294,17 @@ export const AccountProfileDetails = (props) => {
                   ) : null}
                 </Typography>
               </Grid>
-              {updateAdmin === true ? (
+              {/* {updateAdmin === true ? (
                 <Grid item md={6} xs={12}>
                   <Typography color="textPrimary" gutterBottom variant="p">
-                    Password: {adminPfValue.password}
+                    Password:
                     <TextField
                       style={{ marginBottom: "1rem", marginTop: "1rem" }}
                       fullWidth
                       label="Password"
                       name="password"
                       type="password"
-                      value={adminPfValue.password}
+                      value={""}
                       onChange={(e) => {
                         setAdminPfValue({ ...adminPfValue, password: e.target.value });
                       }}
@@ -336,7 +312,7 @@ export const AccountProfileDetails = (props) => {
                     />
                   </Typography>
                 </Grid>
-              ) : null}
+              ) : null} */}
             </Grid>
           </CardContent>
           <Divider />

@@ -26,6 +26,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import SaveAsRoundedIcon from "@mui/icons-material/SaveAsRounded";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -42,7 +43,9 @@ export const UpcomingEvents = ({ product, ...rest }) => {
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog1, setOpenDialog1] = useState(false);
+  const [openDialog2, setOpenDialog2] = useState(false);
   const [viewDialogObj, setViewDialogObj] = useState({});
+  const [member, setMember] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [img, setImage] = useState("");
   const [update, setUpdate] = useState({
@@ -69,9 +72,7 @@ export const UpcomingEvents = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        // console.log(res);
         setuserArray(res.data.upcomingEvents);
-        //  dispatch(RoChamActions.addToAdmin(res.data.roomList))
       })
       .catch((err) => {
         console.log(err);
@@ -123,11 +124,17 @@ export const UpcomingEvents = ({ product, ...rest }) => {
   const dialogClickOpen1 = () => {
     setOpenDialog1(true);
   };
+  const dialogClickOpen2 = () => {
+    setOpenDialog2(true);
+  };
   const dialogClose = () => {
     setOpenDialog(false);
   };
   const dialogClose1 = () => {
     setOpenDialog1(false);
+  };
+  const dialogClose2 = () => {
+    setOpenDialog2(false);
   };
   const handleUpdate = (el) => {
     dialogClickOpen();
@@ -140,13 +147,10 @@ export const UpcomingEvents = ({ product, ...rest }) => {
       description: el.description ? el.description : "",
       partners: el.partners ? el.partners : [""],
       events: el.events ? el.events : [""],
-      image: el.image ? el.image : image,
+      image: el.image ? el.image : img,
     });
-    // console.log(dialogObj);
   };
   const handleUpdateRoom = async (data) => {
-    // console.log(data);
-    // return;
     await axios
       .put(process.env.NEXT_PUBLIC_BASE_URL + "update-committee/" + dialogObj.id, data, {
         headers: {
@@ -154,7 +158,6 @@ export const UpcomingEvents = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        // console.log(res);
         getRoChamCall(user.accessToken);
         setUpdate({
           id: 0,
@@ -177,11 +180,32 @@ export const UpcomingEvents = ({ product, ...rest }) => {
   };
 
   const handleView = (el) => {
-    console.log(el);
     setOpenDialog1(true);
     setViewDialogObj(el);
   };
+  const handleAddMember = (el) => {
+    setOpenDialog2(true);
+    setDialogObj(el);
+  };
 
+  const handleAddMemberIntoEvent = async (el) => {
+    let changeData = { addMembers: [el] };
+    await axios
+      .post(process.env.NEXT_PUBLIC_BASE_URL + "addMemberInEvent/" + dialogObj.id, changeData, {
+        headers: {
+          authorization: user.accessToken,
+        },
+      })
+      .then((res) => {
+        getRoChamCall(user.accessToken);
+        setMember("");
+        dialogClose2();
+        setDialogObj({});
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const onFileChange = async (event) => {
     setSelectedFile(event.target.files[0]);
     // Create an object of formData
@@ -200,8 +224,8 @@ export const UpcomingEvents = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        console.log(res);
-        setImage(res.url);
+        setUpdate({ ...update, image: res.data.url });
+        return setImage(res.data.url);
       })
       .catch((err) => {
         console.log(err);
@@ -434,6 +458,53 @@ export const UpcomingEvents = ({ product, ...rest }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={openDialog2}
+        maxWidth="lg"
+        onClose={dialogClose2}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Add Member"}</DialogTitle>
+        <DialogContent style={{ minWidth: "30rem" }}>
+          <div>
+            <TextField
+              style={{ marginBottom: "1rem", marginTop: "1rem" }}
+              fullWidth
+              label="Member Name"
+              name="name"
+              type="text"
+              defaultValue={member}
+              // value={update.firstname}
+              onChange={(e) => {
+                setMember(e.target.value);
+              }}
+              variant="outlined"
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            fullWidth
+            size="small"
+            sx={{ mt: 2 }}
+            onClick={(el) => handleAddMemberIntoEvent(member)}
+            variant="contained"
+          >
+            Add
+          </Button>
+          <Button
+            fullWidth
+            size="small"
+            sx={{ mt: 2 }}
+            onClick={() => dialogClose2()}
+            variant="contained"
+            color="info"
+          >
+            close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Row
         style={{
           marginTop: "2rem",
@@ -509,6 +580,11 @@ export const UpcomingEvents = ({ product, ...rest }) => {
                           <SaveAsRoundedIcon
                             color="success"
                             onClick={() => handleUpdate(el)}
+                            style={{ marginRight: "1rem", cursor: "pointer" }}
+                          />
+                          <PersonAddAlt1Icon
+                            color="primary"
+                            onClick={() => handleAddMember(el)}
                             style={{ cursor: "pointer" }}
                           />
                         </TableCell>

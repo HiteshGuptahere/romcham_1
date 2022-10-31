@@ -1,4 +1,4 @@
-import { FormikConsumer, useFormik } from "formik";
+import { useFormik } from "formik";
 import { useAuthContext } from "../../contexts/auth-context";
 import { useState, useEffect } from "react";
 import * as Yup from "yup";
@@ -26,7 +26,7 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export const EventsCreate = ({ product, ...rest }) => {
+export const NoticeCreate = ({ product, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [event, setEvent] = useState("event_1");
   const [partner, setPartner] = useState("partner_1");
@@ -49,42 +49,27 @@ export const EventsCreate = ({ product, ...rest }) => {
   const formik = useFormik({
     initialValues: {
       userId: 0,
-      name: "",
-      location: "",
-      startTime: new Date().toISOString(),
-      endTime: new Date().toISOString(),
+      title: "",
+      link: "",
       description: "",
-      organizerEmail: "",
-      mobileNo: 0,
-      addMembers: ["Member_1"],
-      image: "",
+      file: "",
     },
     validationSchema: Yup.object({
-      name: Yup.string().required("Name is required"),
-      location: Yup.string().required("Location is required"),
-      description: Yup.string().required("Description Time is required"),
-      mobileNo: Yup.string().required("Mobile No Time is required"),
-      organizerEmail: Yup.string()
-        .email("Must be a valid email")
-        .max(255)
-        .required("Email is required"),
+      title: Yup.string().required("Title is required"),
+      link: Yup.string().required("Link is required"),
+      description: Yup.string().required("Decription Name is required"),
     }),
     onSubmit: async (values, helpers) => {
       try {
         const payload = {
           userId: values.userId,
-          name: values.name,
-          location: values.location,
-          startTime: values.startTime,
-          endTime: values.endTime,
+          title: values.title,
+          link: values.link,
           description: values.description,
-          organizerEmail: values.organizerEmail,
-          mobileNo: values.mobileNo,
-          addMembers: values.addMembers,
-          image: values.image,
+          file: image,
         };
         return await axios
-          .post(process.env.NEXT_PUBLIC_BASE_URL + "create-event", payload, {
+          .post(process.env.NEXT_PUBLIC_BASE_URL + "create-notice", payload, {
             headers: {
               authorization: user.accessToken,
             },
@@ -92,7 +77,7 @@ export const EventsCreate = ({ product, ...rest }) => {
           .then((res) => {
             handleClick("Success");
             setTimeout(() => {
-              Router.push("/committee").catch(console.error);
+              Router.push("/notice").catch(console.error);
             }, 1500);
           })
           .catch((error) => {
@@ -125,20 +110,20 @@ export const EventsCreate = ({ product, ...rest }) => {
     const formData = new FormData();
 
     // Update the formData object
-    formData.append("image", event.target.files[0], event.target.files[0].name);
+    formData.append("file", event.target.files[0], event.target.files[0].name);
 
     // Details of the uploaded file
     // Request made to the backend api
     // Send formData object
     return await axios
-      .post(process.env.NEXT_PUBLIC_BASE_URL + "create-event-pic", formData, {
+      .post(process.env.NEXT_PUBLIC_BASE_URL + "add-notice-file", formData, {
         headers: {
           authorization: user.accessToken,
         },
       })
       .then((res) => {
         setImage(res.data.url);
-        formik.setFieldValue("image", res.data.url);
+        formik.setFieldValue("file", res.data.url);
       })
       .catch((err) => {
         console.log(err);
@@ -163,7 +148,7 @@ export const EventsCreate = ({ product, ...rest }) => {
           <Container>
             <Row>
               <Col xs={12}>
-                <h2>Create Event</h2>
+                <h2>Create Notice</h2>
               </Col>
             </Row>
             <hr style={{ marginBottom: "2rem" }}></hr>
@@ -171,28 +156,28 @@ export const EventsCreate = ({ product, ...rest }) => {
               <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
                 <TextField
                   style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
-                  error={Boolean(formik.touched.name && formik.errors.name)}
-                  helperText={formik.touched.name && formik.errors.name}
-                  label="Name"
-                  name="name"
+                  error={Boolean(formik.touched.title && formik.errors.title)}
+                  helperText={formik.touched.title && formik.errors.title}
+                  label="Title"
+                  name="title"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   type="text"
-                  value={formik.values.name}
+                  value={formik.values.title}
                   variant="outlined"
                 />
               </Col>
               <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
                 <TextField
                   style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
-                  error={Boolean(formik.touched.location && formik.errors.location)}
-                  helperText={formik.touched.location && formik.errors.location}
-                  label="Location"
-                  name="location"
+                  error={Boolean(formik.touched.link && formik.errors.link)}
+                  helperText={formik.touched.link && formik.errors.link}
+                  label="Link"
+                  name="link"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   type="text"
-                  value={formik.values.location}
+                  value={formik.values.link}
                   variant="outlined"
                 />
               </Col>
@@ -201,7 +186,7 @@ export const EventsCreate = ({ product, ...rest }) => {
                   style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
                   error={Boolean(formik.touched.description && formik.errors.description)}
                   helperText={formik.touched.description && formik.errors.description}
-                  label="description"
+                  label="Description"
                   name="description"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
@@ -212,55 +197,6 @@ export const EventsCreate = ({ product, ...rest }) => {
               </Col>
 
               <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
-                <TextField
-                  style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
-                  error={Boolean(formik.touched.organizerEmail && formik.errors.organizerEmail)}
-                  helperText={formik.touched.organizerEmail && formik.errors.organizerEmail}
-                  label="Organizer Email"
-                  name="organizerEmail"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="text"
-                  value={formik.values.organizerEmail}
-                  variant="outlined"
-                />
-              </Col>
-            </Row>
-            <Row style={{ display: "flex", justifyContent: "space-between" }}>
-              <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
-                <TextField
-                  style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}
-                  error={Boolean(formik.touched.mobileNo && formik.errors.mobileNo)}
-                  helperText={formik.touched.mobileNo && formik.errors.mobileNo}
-                  label="Mobile No"
-                  name="mobileNo"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="text"
-                  value={formik.values.mobileNo}
-                  variant="outlined"
-                />
-              </Col>
-              <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
-                <FormControl style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
-                  <InputLabel id="demo-simple-select-helper-label">Event Access</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-helper-label"
-                    id="demo-simple-select-helper"
-                    value={formik.values.addMembers}
-                    label="Event Access"
-                    onChange={(e) => formik.setFieldValue("addMembers", e.target.value)}
-                  >
-                    <MenuItem value={formik.values.addMembers}>
-                      <em>Select</em>
-                    </MenuItem>
-                    <MenuItem value={"Member_1"}>Member 1</MenuItem>
-                    <MenuItem value={"Member_2"}>Member 2</MenuItem>
-                    <MenuItem value={"Member_3"}>Member 3</MenuItem>
-                  </Select>
-                </FormControl>
-              </Col>
-              <Col style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
                 <Form.Group controlId="formFile" className="mb-3" style={{ width: "100%" }}>
                   <Form.Control
                     type="file"
@@ -268,17 +204,6 @@ export const EventsCreate = ({ product, ...rest }) => {
                     onChange={(e) => onFileChange(e)}
                   />
                 </Form.Group>
-              </Col>
-              <Col style={{ marginRight: "1rem", width: "100%" }}></Col>
-              <Col style={{ marginRight: "1rem", width: "100%" }}>
-                {/* <Button
-                  style={{ marginBottom: "1rem", marginRight: "1rem", width: "10%" }}
-                  size="large"
-                  onClick={() => setClear(true)}
-                  variant="contained"
-                >
-                  Clear
-                </Button> */}
               </Col>
             </Row>
             {formik.errors.submit && (

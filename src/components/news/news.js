@@ -17,7 +17,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import { getInitials } from "../../utils/get-initials";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import Dialog from "@mui/material/Dialog";
@@ -26,8 +26,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import SaveAsRoundedIcon from "@mui/icons-material/SaveAsRounded";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import Form from "react-bootstrap/Form";
 
-export const UserCard = ({ product, ...rest }) => {
+export const News = ({ product, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -35,13 +37,18 @@ export const UserCard = ({ product, ...rest }) => {
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog1, setOpenDialog1] = useState(false);
+  const [openDialog2, setOpenDialog2] = useState(false);
   const [viewDialogObj, setViewDialogObj] = useState({});
-  const [image, setImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [member, setMember] = useState("");
+  const [img, setImage] = useState("");
   const [update, setUpdate] = useState({
-    name: "",
-    email: "",
-    mobile: "",
-    password: "",
+    id: 0,
+    title: "",
+    postedBy: "",
+    date: new Date().toISOString(),
+    news_url: "",
+    image: "",
   });
   const [dialogObj, setDialogObj] = useState({});
 
@@ -51,13 +58,13 @@ export const UserCard = ({ product, ...rest }) => {
   }, []);
   const getRoChamCall = async (token) => {
     await axios
-      .get(process.env.NEXT_PUBLIC_BASE_URL + "get-user-list", {
+      .get(process.env.NEXT_PUBLIC_BASE_URL + "get-news-list", {
         headers: {
           authorization: token,
         },
       })
       .then((res) => {
-        setuserArray(res.data.user);
+        setuserArray(res.data.news);
       })
       .catch((err) => {
         console.log(err);
@@ -109,33 +116,48 @@ export const UserCard = ({ product, ...rest }) => {
   const dialogClickOpen1 = () => {
     setOpenDialog1(true);
   };
+  const dialogClickOpen2 = () => {
+    setOpenDialog2(true);
+  };
   const dialogClose = () => {
     setOpenDialog(false);
   };
   const dialogClose1 = () => {
     setOpenDialog1(false);
   };
+  const dialogClose2 = () => {
+    setOpenDialog2(false);
+  };
   const handleUpdate = (el) => {
     dialogClickOpen();
     setDialogObj(el);
     setUpdate({
-      name: el.firstname ? el.firstname : "",
-      email: el.email ? el.email : "",
-      mobile: el.mobile ? el.mobile : "",
-      password: el.password ? el.password : "",
+      id: el.id ? el.id : 0,
+      title: el.title ? el.title : "",
+      postedBy: el.postedBy ? el.postedBy : "",
+      date: new Date().toISOString(),
+      news_url: el.news_url ? el.news_url : "",
+      image: el.image ? el.image : img,
     });
   };
-  const handleUpdateUser = async () => {
+  const handleAddMember = (el) => {
+    setOpenDialog2(true);
+    setDialogObj(el);
+  };
+
+  const handleAddMemberIntoEvent = async (el) => {
+    let changeData = { addMembers: [el] };
     await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-user/" + dialogObj._id, update, {
+      .post(process.env.NEXT_PUBLIC_BASE_URL + "addMemberInCommittee/" + dialogObj.id, changeData, {
         headers: {
           authorization: user.accessToken,
         },
       })
       .then((res) => {
         getRoChamCall(user.accessToken);
+        setMember("");
+        dialogClose2();
         setDialogObj({});
-        dialogClose();
       })
       .catch((err) => {
         console.log(err);
@@ -153,7 +175,7 @@ export const UserCard = ({ product, ...rest }) => {
     // Request made to the backend api
     // Send formData object
     return await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-user-pic/" + dialogObj.id, formData, {
+      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-news-pic/" + dialogObj.id, formData, {
         headers: {
           authorization: user.accessToken,
         },
@@ -167,8 +189,9 @@ export const UserCard = ({ product, ...rest }) => {
       });
   };
   const handleUpdateRoom = async (data) => {
+    // return;
     await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-committee/" + dialogObj.id, data, {
+      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-news/" + dialogObj.id, data, {
         headers: {
           authorization: user.accessToken,
         },
@@ -177,23 +200,20 @@ export const UserCard = ({ product, ...rest }) => {
         getRoChamCall(user.accessToken);
         setUpdate({
           id: 0,
-          committee_name: "",
-          manager_name: "",
-          email: "",
-          description: "",
-          partners: [""],
-          events: [""],
+          title: "",
+          postedBy: "",
+          date: new Date().toISOString(),
+          news_url: "",
           image: "",
         });
         setDialogObj({});
         dialogClose();
-        // setAdminArray(res.data.userList);
-        // dispatch(AdminActions.addToAdmin(res.data.userList));
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
   const handleView = (el) => {
     setOpenDialog1(true);
     setViewDialogObj(el);
@@ -220,66 +240,13 @@ export const UserCard = ({ product, ...rest }) => {
               </tr>
               <tr>
                 <td scope="row" style={{ paddingRight: "3rem" }}>
-                  Name : {viewDialogObj.name ? viewDialogObj.name : "NA"}
+                  Title : {viewDialogObj.title ? viewDialogObj.title : "NA"}
                 </td>
+                <td>Posted By : {viewDialogObj.postedBy ? viewDialogObj.postedBy : "NA"}</td>
+              </tr>
+              <tr>
                 <td>Email : {viewDialogObj.email ? viewDialogObj.email : "NA"}</td>
-              </tr>
-              <tr>
-                <td scope="row" style={{ paddingRight: "3rem" }}>
-                  Mobile : {viewDialogObj.mobile ? viewDialogObj.mobile : "NA"}
-                </td>
-                <td></td>
-              </tr>
-              <tr style={{ marginBottom: "6rem !important" }}>
-                <td>
-                  <h3>Company Information</h3>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row" style={{ paddingRight: "3rem" }}>
-                  Company Name : {viewDialogObj.companyName ? viewDialogObj.companyName : "NA"}
-                </td>
-                <td>
-                  Company Reg No : {viewDialogObj.companyRegNo ? viewDialogObj.companyRegNo : "NA"}
-                </td>
-              </tr>
-              <tr>
-                <td scope="row" style={{ paddingRight: "3rem" }}>
-                  Representative Name :{" "}
-                  {viewDialogObj.representativeName ? viewDialogObj.representativeName : "NA"}
-                </td>
-                <td>
-                  Num Of Employess :{" "}
-                  {viewDialogObj.numOfEmployess ? viewDialogObj.numOfEmployess : "NA"}
-                </td>
-              </tr>
-              <tr>
-                <td scope="row" style={{ paddingRight: "3rem" }}>
-                  Annual Turn : {viewDialogObj.annualTurn ? viewDialogObj.annualTurn : "NA"}
-                </td>
-                <td>
-                  Membership Cat :{" "}
-                  {viewDialogObj.membershipCat ? viewDialogObj.membershipCat : "NA"}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <h3>Access</h3>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row" style={{ paddingRight: "3rem" }}>
-                  Event Access : {viewDialogObj.eventAccess ? viewDialogObj.eventAccess : "NA"}
-                </td>
-                <td>
-                  Polls Access : {viewDialogObj.pollsAccess ? viewDialogObj.pollsAccess : "NA"}
-                </td>
-              </tr>
-              <tr>
-                <td scope="row" style={{ paddingRight: "3rem" }}>
-                  News Access : {viewDialogObj.newsAccess ? viewDialogObj.newsAccess : "NA"}
-                </td>
-                <td></td>
+                <td>News Url : {viewDialogObj.news_url ? viewDialogObj.news_url : "NA"}</td>
               </tr>
             </tbody>
           </table>
@@ -310,13 +277,13 @@ export const UserCard = ({ product, ...rest }) => {
             <TextField
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
               fullWidth
-              label="Name"
-              name="name"
+              label="Title"
+              name="title"
               type="text"
-              defaultValue={dialogObj.firstname}
+              defaultValue={dialogObj.title}
               // value={update.firstname}
               onChange={(e) => {
-                setUpdate({ ...update, name: e.target.value });
+                setUpdate({ ...update, title: e.target.value });
               }}
               variant="outlined"
             />
@@ -332,35 +299,13 @@ export const UserCard = ({ product, ...rest }) => {
             <TextField
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
               fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              defaultValue={dialogObj.email}
-              // value={update.email}
-              onChange={(e) => {
-                setUpdate({ ...update, email: e.target.value });
-              }}
-              variant="outlined"
-            />
-            {/* {newPass.status ? (
-              newPass.status === 200 ? (
-                <p style={{ color: "#5cb85c", textAlign: "center" }}>{newPass.message}</p>
-              ) : (
-                <p style={{ color: "red", textAlign: "center" }}>{newPass.message}</p>
-              )
-            ) : null} */}
-          </div>
-          <div>
-            <TextField
-              style={{ marginBottom: "1rem", marginTop: "1rem" }}
-              fullWidth
-              label="Mobile"
-              name="mobile"
+              label="Posted By"
+              name="postedBy"
               type="text"
-              defaultValue={dialogObj.mobile}
-              // value={update.mobile}
+              defaultValue={dialogObj.postedBy}
+              // value={update.manager_name}
               onChange={(e) => {
-                setUpdate({ ...update, mobile: e.target.value });
+                setUpdate({ ...update, postedBy: e.target.value });
               }}
               variant="outlined"
             />
@@ -376,14 +321,13 @@ export const UserCard = ({ product, ...rest }) => {
             <TextField
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
               fullWidth
-              label="Password"
-              name="password"
-              type="password"
-              defaultValue={""}
-              autoComplete={"false"}
-              // value={update.password}
+              label="News Url"
+              name="news_url"
+              type="text"
+              defaultValue={dialogObj.news_url}
+              // value={update.news_url}
               onChange={(e) => {
-                setUpdate({ ...update, password: e.target.value });
+                setUpdate({ ...update, news_url: e.target.value });
               }}
               variant="outlined"
             />
@@ -394,6 +338,11 @@ export const UserCard = ({ product, ...rest }) => {
                 <p style={{ color: "red", textAlign: "center" }}>{newPass.message}</p>
               )
             ) : null} */}
+          </div>
+          <div>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Control type="file" onChange={(e) => onFileChange(e)} />
+            </Form.Group>
           </div>
         </DialogContent>
         <DialogActions>
@@ -401,7 +350,7 @@ export const UserCard = ({ product, ...rest }) => {
             fullWidth
             size="small"
             sx={{ mt: 2 }}
-            onClick={(el) => handleUpdateRoom()}
+            onClick={(el) => handleUpdateRoom(update)}
             variant="contained"
           >
             Submit
@@ -418,6 +367,53 @@ export const UserCard = ({ product, ...rest }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={openDialog2}
+        maxWidth="lg"
+        onClose={dialogClose2}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Add Member"}</DialogTitle>
+        <DialogContent style={{ minWidth: "30rem" }}>
+          <div>
+            <TextField
+              style={{ marginBottom: "1rem", marginTop: "1rem" }}
+              fullWidth
+              label="Member Name"
+              name="name"
+              type="text"
+              defaultValue={member}
+              // value={update.firstname}
+              onChange={(e) => {
+                setMember(e.target.value);
+              }}
+              variant="outlined"
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            fullWidth
+            size="small"
+            sx={{ mt: 2 }}
+            onClick={(el) => handleAddMemberIntoEvent(member)}
+            variant="contained"
+          >
+            Add
+          </Button>
+          <Button
+            fullWidth
+            size="small"
+            sx={{ mt: 2 }}
+            onClick={() => dialogClose2()}
+            variant="contained"
+            color="info"
+          >
+            close
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Card {...rest}>
         <PerfectScrollbar>
           <Box sx={{ minWidth: 1050 }}>
@@ -425,10 +421,10 @@ export const UserCard = ({ product, ...rest }) => {
               <TableHead>
                 <TableRow>
                   <TableCell>Logo</TableCell>
-                  <TableCell>Created At</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Mobile</TableCell>
-                  <TableCell>Email</TableCell>
+                  <TableCell>Title</TableCell>
+                  <TableCell>Posted By</TableCell>
+                  <TableCell>Posted Date</TableCell>
+                  <TableCell>News Url</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -443,8 +439,7 @@ export const UserCard = ({ product, ...rest }) => {
                         <TableCell>
                           {" "}
                           <img
-                            alt={""}
-                            key={el.image}
+                            alt={el.title}
                             src={el.image}
                             style={{
                               height: 48,
@@ -452,14 +447,10 @@ export const UserCard = ({ product, ...rest }) => {
                             }}
                           />
                         </TableCell>
-                        <TableCell key={el.createdAt}>
-                          {el.createdAt ? new Date(el.createdAt).toLocaleDateString() : "N/A"}
-                        </TableCell>
-                        <TableCell key={el.firstName}>
-                          {el.firstName ? el.firstName + " " + el.lastName : "N/A"}
-                        </TableCell>
-                        <TableCell key={el.mobile}>{el.mobile ? el.mobile : "N/A"}</TableCell>
-                        <TableCell key={el.email}>{el.email ? el.email : "N/A"}</TableCell>
+                        <TableCell>{el.title ? el.title : "N/A"}</TableCell>
+                        <TableCell>{el.postedBy ? el.postedBy : "N/A"}</TableCell>
+                        <TableCell>{el.date ? new Date(el.date).toISOString() : "N/A"}</TableCell>
+                        <TableCell>{el.news_url ? el.news_url : "N/A"}</TableCell>
                         <TableCell>
                           <VisibilityRoundedIcon
                             color="info"
@@ -469,8 +460,13 @@ export const UserCard = ({ product, ...rest }) => {
                           <SaveAsRoundedIcon
                             color="success"
                             onClick={() => handleUpdate(el)}
-                            style={{ cursor: "pointer" }}
+                            style={{ marginRight: "1rem", cursor: "pointer" }}
                           />
+                          {/* <PersonAddAlt1Icon
+                            color="primary"
+                            onClick={() => handleAddMember(el)}
+                            style={{ cursor: "pointer" }}
+                          /> */}
                         </TableCell>
                       </TableRow>
                     ))

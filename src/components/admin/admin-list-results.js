@@ -118,7 +118,6 @@ export const AdminListResults = ({ customers, ...rest }) => {
         }
       )
       .then((res) => {
-        console.log(res);
         getAdminApiCall(user.accessToken);
       })
       .catch((err) => {
@@ -137,7 +136,6 @@ export const AdminListResults = ({ customers, ...rest }) => {
         }
       )
       .then((res) => {
-        console.log(res);
         getAdminApiCall(user.accessToken);
       })
       .catch((err) => {
@@ -145,7 +143,6 @@ export const AdminListResults = ({ customers, ...rest }) => {
       });
   };
   const handleUpdateRoom = async () => {
-    console.log(update, dialogObj);
     await axios
       .put(process.env.NEXT_PUBLIC_RoCham_URL + "roomUpdate/" + dialogObj._id, update, {
         headers: {
@@ -153,7 +150,6 @@ export const AdminListResults = ({ customers, ...rest }) => {
         },
       })
       .then((res) => {
-        console.log(res);
         getAdminApiCall(user.accessToken);
         setUpdate({ type: "", distance: "", time_date: new Date().toISOString() });
         setDialogObj({});

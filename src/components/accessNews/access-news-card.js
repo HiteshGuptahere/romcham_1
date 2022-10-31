@@ -17,7 +17,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
-import { getInitials } from "../../utils/get-initials";
+import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import Dialog from "@mui/material/Dialog";
@@ -25,9 +25,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import SaveAsRoundedIcon from "@mui/icons-material/SaveAsRounded";
+import Key from "@mui/icons-material/Key";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-export const UserCard = ({ product, ...rest }) => {
+export const AccessNewsCard = ({ product, ...rest }) => {
   const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -36,14 +40,10 @@ export const UserCard = ({ product, ...rest }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog1, setOpenDialog1] = useState(false);
   const [viewDialogObj, setViewDialogObj] = useState({});
-  const [image, setImage] = useState(null);
-  const [update, setUpdate] = useState({
-    name: "",
-    email: "",
-    mobile: "",
-    password: "",
-  });
+  const [event, setEvent] = useState("");
+  const [dEvent, setDevent] = useState("");
   const [dialogObj, setDialogObj] = useState({});
+  const [revokeEvAccess, setRevokeEvAccess] = useState(false);
 
   const { user } = useAuthContext();
   useEffect(() => {
@@ -58,42 +58,23 @@ export const UserCard = ({ product, ...rest }) => {
       })
       .then((res) => {
         setuserArray(res.data.user);
+        //  dispatch(RoChamActions.addToAdmin(res.data.roomList))
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
+  // const handleSelectAll = (event) => {
+  //   let newSelectedCustomerIds;
 
-    if (event.target.checked) {
-      newSelectedCustomerIds = userArray.map((admin) => admin._id);
-    } else {
-      newSelectedCustomerIds = [];
-    }
+  //   if (event.target.checked) {
+  //     newSelectedCustomerIds = userArray.map((admin) => admin._id);
+  //   } else {
+  //     newSelectedCustomerIds = [];
+  //   }
 
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
-
-  const handleSelectOne = (event, _id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(_id);
-    let newSelectedCustomerIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds, _id);
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(1));
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(selectedCustomerIds.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
-  };
+  //   setSelectedCustomerIds(newSelectedCustomerIds);
+  // };
 
   const handleLimitChange = (event) => {
     setLimit(event.target.value);
@@ -118,85 +99,79 @@ export const UserCard = ({ product, ...rest }) => {
   const handleUpdate = (el) => {
     dialogClickOpen();
     setDialogObj(el);
-    setUpdate({
-      name: el.firstname ? el.firstname : "",
-      email: el.email ? el.email : "",
-      mobile: el.mobile ? el.mobile : "",
-      password: el.password ? el.password : "",
-    });
+    setEvent(el.eventAccess);
   };
-  const handleUpdateUser = async () => {
-    await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-user/" + dialogObj._id, update, {
-        headers: {
-          authorization: user.accessToken,
-        },
-      })
-      .then((res) => {
-        getRoChamCall(user.accessToken);
-        setDialogObj({});
-        dialogClose();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const onFileChange = async (event) => {
-    setSelectedFile(event.target.files[0]);
-    // Create an object of formData
-    const formData = new FormData();
-
-    // Update the formData object
-    formData.append("image", event.target.files[0], event.target.files[0].name);
-
-    // Details of the uploaded file
-    // Request made to the backend api
-    // Send formData object
-    return await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-user-pic/" + dialogObj.id, formData, {
-        headers: {
-          authorization: user.accessToken,
-        },
-      })
-      .then((res) => {
-        setUpdate({ ...update, image: res.data.data.url });
-        return setImage(res.data.data.url);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const handleUpdateRoom = async (data) => {
-    await axios
-      .put(process.env.NEXT_PUBLIC_BASE_URL + "update-committee/" + dialogObj.id, data, {
-        headers: {
-          authorization: user.accessToken,
-        },
-      })
-      .then((res) => {
-        getRoChamCall(user.accessToken);
-        setUpdate({
-          id: 0,
-          committee_name: "",
-          manager_name: "",
-          email: "",
-          description: "",
-          partners: [""],
-          events: [""],
-          image: "",
+  const handleUpdateRoom = async () => {
+    let update = { access: [event] };
+    if (revokeEvAccess) {
+      await axios
+        .put(
+          process.env.NEXT_PUBLIC_BASE_URL + "revoke-news-access?email=" + dialogObj.email,
+          update,
+          {
+            headers: {
+              authorization: user.accessToken,
+            },
+          }
+        )
+        .then((res) => {
+          setRevokeEvAccess(false);
+          getRoChamCall(user.accessToken);
+          dialogClose();
+          setEvent("");
+          setDevent("");
+          // setAdminArray(res.data.userList);
+          // dispatch(AdminActions.addToAdmin(res.data.userList));
+        })
+        .catch((err) => {
+          console.log(err.response);
+          setRevokeEvAccess(false);
+          getRoChamCall(user.accessToken);
+          dialogClose();
+          setDevent("");
+          setEvent("");
         });
-        setDialogObj({});
-        dialogClose();
-        // setAdminArray(res.data.userList);
-        // dispatch(AdminActions.addToAdmin(res.data.userList));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    } else {
+      await axios
+        .put(
+          process.env.NEXT_PUBLIC_BASE_URL + "give-news-access?email=" + dialogObj.email,
+          update,
+          {
+            headers: {
+              authorization: user.accessToken,
+            },
+          }
+        )
+        .then((res) => {
+          getRoChamCall(user.accessToken);
+          dialogClose();
+          setEvent("");
+          setDevent("");
+          // setAdminArray(res.data.userList);
+          // dispatch(AdminActions.addToAdmin(res.data.userList));
+        })
+        .catch((err) => {
+          console.log(err);
+          setEvent("");
+          setDevent("");
+          dialogClose();
+        });
+    }
+  };
+  const handleEventChange = (e) => {
+    // let event = [e];
+    setDevent(e);
+    setEvent(e);
   };
   const handleView = (el) => {
     setOpenDialog1(true);
     setViewDialogObj(el);
+  };
+  const revokeAccess = (el) => {
+    setRevokeEvAccess(true);
+    dialogClickOpen();
+    setDialogObj(el);
+    setEvent(el.eventAccess);
   };
 
   return (
@@ -306,94 +281,24 @@ export const UserCard = ({ product, ...rest }) => {
       >
         <DialogTitle id="alert-dialog-title">{"Update User"}</DialogTitle>
         <DialogContent style={{ minWidth: "30rem" }}>
-          <div>
-            <TextField
-              style={{ marginBottom: "1rem", marginTop: "1rem" }}
-              fullWidth
-              label="Name"
-              name="name"
-              type="text"
-              defaultValue={dialogObj.firstname}
-              // value={update.firstname}
-              onChange={(e) => {
-                setUpdate({ ...update, name: e.target.value });
-              }}
-              variant="outlined"
-            />
-            {/* {oldPass.status ? (
-              oldPass.status === 200 ? (
-                <p style={{ color: "#5cb85c", textAlign: "center" }}>{oldPass.message}</p>
-              ) : (
-                <p style={{ color: "red", textAlign: "center" }}>{oldPass.message}</p>
-              )
-            ) : null} */}
-          </div>
-          <div>
-            <TextField
-              style={{ marginBottom: "1rem", marginTop: "1rem" }}
-              fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              defaultValue={dialogObj.email}
-              // value={update.email}
-              onChange={(e) => {
-                setUpdate({ ...update, email: e.target.value });
-              }}
-              variant="outlined"
-            />
-            {/* {newPass.status ? (
-              newPass.status === 200 ? (
-                <p style={{ color: "#5cb85c", textAlign: "center" }}>{newPass.message}</p>
-              ) : (
-                <p style={{ color: "red", textAlign: "center" }}>{newPass.message}</p>
-              )
-            ) : null} */}
-          </div>
-          <div>
-            <TextField
-              style={{ marginBottom: "1rem", marginTop: "1rem" }}
-              fullWidth
-              label="Mobile"
-              name="mobile"
-              type="text"
-              defaultValue={dialogObj.mobile}
-              // value={update.mobile}
-              onChange={(e) => {
-                setUpdate({ ...update, mobile: e.target.value });
-              }}
-              variant="outlined"
-            />
-            {/* {newPass.status ? (
-              newPass.status === 200 ? (
-                <p style={{ color: "#5cb85c", textAlign: "center" }}>{newPass.message}</p>
-              ) : (
-                <p style={{ color: "red", textAlign: "center" }}>{newPass.message}</p>
-              )
-            ) : null} */}
-          </div>
-          <div>
-            <TextField
-              style={{ marginBottom: "1rem", marginTop: "1rem" }}
-              fullWidth
-              label="Password"
-              name="password"
-              type="password"
-              defaultValue={""}
-              autoComplete={"false"}
-              // value={update.password}
-              onChange={(e) => {
-                setUpdate({ ...update, password: e.target.value });
-              }}
-              variant="outlined"
-            />
-            {/* {newPass.status ? (
-              newPass.status === 200 ? (
-                <p style={{ color: "#5cb85c", textAlign: "center" }}>{newPass.message}</p>
-              ) : (
-                <p style={{ color: "red", textAlign: "center" }}>{newPass.message}</p>
-              )
-            ) : null} */}
+          <div style={{ padding: "1rem" }}>
+            <FormControl style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
+              <InputLabel id="demo-simple-select-helper-label">Event Access</InputLabel>
+              <Select
+                labelId="demo-simple-select-helper-label"
+                id="demo-simple-select-helper"
+                value={dEvent}
+                label="Event Access"
+                onChange={(e) => handleEventChange(e.target.value)}
+              >
+                <MenuItem value="">
+                  <em>Select</em>
+                </MenuItem>
+                <MenuItem value={"read"}>Read</MenuItem>
+                <MenuItem value={"create"}>Create</MenuItem>
+                <MenuItem value={"update"}>Update</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </DialogContent>
         <DialogActions>
@@ -424,12 +329,12 @@ export const UserCard = ({ product, ...rest }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Logo</TableCell>
                   <TableCell>Created At</TableCell>
                   <TableCell>Name</TableCell>
                   <TableCell>Mobile</TableCell>
                   <TableCell>Email</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell>Access</TableCell>
+                  <TableCell>Give Access</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -441,35 +346,32 @@ export const UserCard = ({ product, ...rest }) => {
                         selected={selectedCustomerIds.indexOf(el._id) !== -1}
                       >
                         <TableCell>
-                          {" "}
-                          <img
-                            alt={""}
-                            key={el.image}
-                            src={el.image}
-                            style={{
-                              height: 48,
-                              width: 48,
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell key={el.createdAt}>
                           {el.createdAt ? new Date(el.createdAt).toLocaleDateString() : "N/A"}
                         </TableCell>
-                        <TableCell key={el.firstName}>
-                          {el.firstName ? el.firstName + " " + el.lastName : "N/A"}
+                        <TableCell>
+                          {el.firstName + " " + el.lastName
+                            ? el.firstName + " " + el.lastName
+                            : "N/A"}
                         </TableCell>
-                        <TableCell key={el.mobile}>{el.mobile ? el.mobile : "N/A"}</TableCell>
-                        <TableCell key={el.email}>{el.email ? el.email : "N/A"}</TableCell>
+                        <TableCell>{el.mobile ? el.mobile : "N/A"}</TableCell>
+                        <TableCell>{el.email ? el.email : "N/A"}</TableCell>
+                        <TableCell>{el.newsAccess ? ` ${el.newsAccess}` : "N/A"}</TableCell>
                         <TableCell>
                           <VisibilityRoundedIcon
                             color="info"
                             onClick={() => handleView(el)}
                             style={{ marginRight: "1rem", cursor: "pointer" }}
                           />
-                          <SaveAsRoundedIcon
+                          <Key
                             color="success"
                             onClick={() => handleUpdate(el)}
-                            style={{ cursor: "pointer" }}
+                            style={{ marginRight: "1rem", cursor: "pointer" }}
+                          />
+                          {""}
+                          <DeleteForeverIcon
+                            color="success"
+                            onClick={() => revokeAccess(el)}
+                            style={{ cursor: "pointer", color: "red" }}
                           />
                         </TableCell>
                       </TableRow>

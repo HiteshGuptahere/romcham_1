@@ -1,11 +1,11 @@
 {
-  "name": "RomCham",
+  "name": "RoCham",
   "author": "IXIONO",
   "licence": "MIT",
   "version": "2.1.1",
   "private": false,
   "scripts": {
-    "dev": "next",
+    "dev": "next dev -p 4022",
     "build": "next build",
     "start": "next start",
     "export": "next export",

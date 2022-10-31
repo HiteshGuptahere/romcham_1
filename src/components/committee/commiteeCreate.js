@@ -41,11 +41,9 @@ export const CommitteeCreate = ({ product, ...rest }) => {
 
   const { user } = useAuthContext();
   const handleEventChange = (e) => {
-    // console.log(e);
     setEvent(e);
   };
   const handlePartnerChange = (e) => {
-    // console.log(e);
     setPartner(e);
   };
   const formik = useFormik({
@@ -65,7 +63,6 @@ export const CommitteeCreate = ({ product, ...rest }) => {
       email: Yup.string().email("Must be a valid email").max(255).required("Email is required"),
     }),
     onSubmit: async (values, helpers) => {
-      // console.log(values);
       try {
         const payload = {
           committee_name: values.committee_name,
@@ -83,7 +80,6 @@ export const CommitteeCreate = ({ product, ...rest }) => {
             },
           })
           .then((res) => {
-            console.log(res);
             handleClick("Success");
             setTimeout(() => {
               Router.push("/committee").catch(console.error);
@@ -131,7 +127,6 @@ export const CommitteeCreate = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        console.log(res);
         setImage(res.data.url);
         formik.setFieldValue("image", res.data.url);
       })

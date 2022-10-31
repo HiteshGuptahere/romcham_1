@@ -17,12 +17,12 @@ export const AccountPopover = (props) => {
   let data = useSelector((state) => (state.Profile.itemList ? state.Profile.itemList : []));
   useEffect(() => {
     getAdminApiCall(data.accessToken);
-  }, []);
+  }, [getAdminApiCall]);
   const getAdminApiCall = async (token) => {
     await axios
       .get(process.env.NEXT_PUBLIC_BASE_URL + "getProfile", {
         headers: {
-          authorization: token,
+          authorization: "Bearer " + token,
         },
       })
       .then((res) => {

@@ -26,6 +26,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import SaveAsRoundedIcon from "@mui/icons-material/SaveAsRounded";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -42,9 +43,11 @@ export const PastEvents = ({ product, ...rest }) => {
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog1, setOpenDialog1] = useState(false);
+  const [openDialog2, setOpenDialog2] = useState(false);
   const [viewDialogObj, setViewDialogObj] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
   const [image, setImage] = useState("");
+  const [member, setMember] = useState("");
   const [update, setUpdate] = useState({
     userId: 0,
     name: "",
@@ -71,9 +74,7 @@ export const PastEvents = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        // console.log(res);
         setuserArray(res.data.pastEvents);
-        //  dispatch(RoChamActions.addToAdmin(res.data.roomList))
       })
       .catch((err) => {
         console.log(err);
@@ -125,11 +126,17 @@ export const PastEvents = ({ product, ...rest }) => {
   const dialogClickOpen1 = () => {
     setOpenDialog1(true);
   };
+  const dialogClickOpen2 = () => {
+    setOpenDialog2(true);
+  };
   const dialogClose = () => {
     setOpenDialog(false);
   };
   const dialogClose1 = () => {
     setOpenDialog1(false);
+  };
+  const dialogClose2 = () => {
+    setOpenDialog2(false);
   };
   const handleUpdate = (el) => {
     dialogClickOpen();
@@ -146,11 +153,8 @@ export const PastEvents = ({ product, ...rest }) => {
       addMembers: el.addMembers ? el.addMembers : [""],
       image: el.image ? el.image : image,
     });
-    // console.log(dialogObj);
   };
   const handleUpdateRoom = async (data) => {
-    console.log(data);
-    // return;
     await axios
       .put(process.env.NEXT_PUBLIC_BASE_URL + "update-event/" + dialogObj.id, data, {
         headers: {
@@ -158,7 +162,6 @@ export const PastEvents = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        // console.log(res);
         getRoChamCall(user.accessToken);
         setUpdate({
           userId: 0,
@@ -183,9 +186,32 @@ export const PastEvents = ({ product, ...rest }) => {
   };
 
   const handleView = (el) => {
-    console.log(el);
     setOpenDialog1(true);
     setViewDialogObj(el);
+  };
+
+  const handleAddMember = (el) => {
+    setOpenDialog2(true);
+    setDialogObj(el);
+  };
+
+  const handleAddMemberIntoEvent = async (el) => {
+    let changeData = { addMembers: [el] };
+    await axios
+      .post(process.env.NEXT_PUBLIC_BASE_URL + "addMemberInEvent/" + dialogObj.id, changeData, {
+        headers: {
+          authorization: user.accessToken,
+        },
+      })
+      .then((res) => {
+        getRoChamCall(user.accessToken);
+        setMember("");
+        dialogClose2();
+        setDialogObj({});
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const onFileChange = async (event) => {
@@ -206,8 +232,8 @@ export const PastEvents = ({ product, ...rest }) => {
         },
       })
       .then((res) => {
-        console.log(res);
-        setImage(res.url);
+        setUpdate({ ...update, image: res.data.data.url });
+        return setImage(res.data.data.url);
       })
       .catch((err) => {
         console.log(err);
@@ -247,6 +273,12 @@ export const PastEvents = ({ product, ...rest }) => {
                   Description : {viewDialogObj.description ? viewDialogObj.description : "NA"}
                 </td>
                 <td>Mobile No : {viewDialogObj.mobileNo ? viewDialogObj.mobileNo : "NA"}</td>
+              </tr>
+              <tr>
+                <td scope="row" style={{ paddingRight: "3rem" }}>
+                  Members : {viewDialogObj.addMembers ? viewDialogObj.addMembers + " " : "NA"}
+                </td>
+                <td></td>
               </tr>
             </tbody>
           </table>
@@ -376,7 +408,7 @@ export const PastEvents = ({ product, ...rest }) => {
               variant="outlined"
             />
           </div>
-          <div>
+          {/* <div>
             <FormControl style={{ marginBottom: "1rem", marginRight: "1rem", width: "100%" }}>
               <InputLabel id="demo-simple-select-helper-label">Add Members</InputLabel>
               <Select
@@ -396,7 +428,7 @@ export const PastEvents = ({ product, ...rest }) => {
                 <MenuItem value={"Member_3"}>Member 3</MenuItem>
               </Select>
             </FormControl>
-          </div>
+          </div> */}
           <div>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Control type="file" onChange={(e) => onFileChange(e)} />
@@ -418,6 +450,53 @@ export const PastEvents = ({ product, ...rest }) => {
             size="small"
             sx={{ mt: 2 }}
             onClick={() => dialogClose()}
+            variant="contained"
+            color="info"
+          >
+            close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openDialog2}
+        maxWidth="lg"
+        onClose={dialogClose2}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Add Member"}</DialogTitle>
+        <DialogContent style={{ minWidth: "30rem" }}>
+          <div>
+            <TextField
+              style={{ marginBottom: "1rem", marginTop: "1rem" }}
+              fullWidth
+              label="Member Name"
+              name="name"
+              type="text"
+              defaultValue={member}
+              // value={update.firstname}
+              onChange={(e) => {
+                setMember(e.target.value);
+              }}
+              variant="outlined"
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            fullWidth
+            size="small"
+            sx={{ mt: 2 }}
+            onClick={(el) => handleAddMemberIntoEvent(member)}
+            variant="contained"
+          >
+            Add
+          </Button>
+          <Button
+            fullWidth
+            size="small"
+            sx={{ mt: 2 }}
+            onClick={() => dialogClose2()}
             variant="contained"
             color="info"
           >
@@ -480,7 +559,7 @@ export const PastEvents = ({ product, ...rest }) => {
                         <TableCell>
                           {" "}
                           <img
-                            alt={el.image}
+                            alt={""}
                             src={el.image}
                             style={{
                               height: 48,
@@ -502,6 +581,11 @@ export const PastEvents = ({ product, ...rest }) => {
                           <SaveAsRoundedIcon
                             color="success"
                             onClick={() => handleUpdate(el)}
+                            style={{ marginRight: "1rem", cursor: "pointer" }}
+                          />
+                          <PersonAddAlt1Icon
+                            color="primary"
+                            onClick={() => handleAddMember(el)}
                             style={{ cursor: "pointer" }}
                           />
                         </TableCell>

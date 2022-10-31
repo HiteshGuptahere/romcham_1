@@ -15,6 +15,7 @@ import MuiAlert from "@mui/material/Alert";
 import Slide from "@mui/material/Slide";
 import { useSelector, useDispatch } from "react-redux";
 import { AccountHolderActions } from "../../store/accountHolderSlice";
+import { TokenAction } from "../../store/token";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -60,12 +61,12 @@ const Page = () => {
         await axios
           .post(url.toString(), payload)
           .then((res) => {
-            console.log(res.data);
             if (res.data.code === 200) {
               handleClick(res.data.message, "success");
               helpers.setSubmitting(true);
               authContext.signIn(res.data);
               dispatch(AccountHolderActions.addProfile(res.data));
+              dispatch(TokenAction.addToken(res.data.accessToken));
               Router.push("/").catch(console.error);
             } else {
               handleClick(res.data.msg, "error");
@@ -98,7 +99,6 @@ const Page = () => {
         await axios
           .get(urlMobile.toString() + email)
           .then((res) => {
-            console.log(res);
             handleClick(res.data.message, "success");
             setLoder(false);
             setEmail("");
@@ -111,7 +111,6 @@ const Page = () => {
               status: 400,
               message: "Please Provide a Valid Number, Exist In Database!",
             });
-            console.log("submit", "Please Provide a Number");
             setLoder(false);
           });
       }
