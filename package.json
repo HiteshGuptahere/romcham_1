@@ -7,10 +7,11 @@
   "scripts": {
     "dev": "next dev -p 4022",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "export": "next export",
     "lint": "next lint",
-    "lint-fix": "next lint --fix"
+    "lint-fix": "next lint --fix",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "@emotion/cache": "11.10.3",
